@@ -1,0 +1,133 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User profile for merchants, couriers, and admins.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "name": { "type": "string", "description": "Full name" },
+        "email": { "type": "string", "description": "Email address" },
+        "role": { "type": "string", "enum": ["merchant", "courier", "admin"], "description": "User role" },
+        "profilePic": { "type": "string", "description": "Profile picture URL" },
+        "vehicleInfo": { "type": "string", "description": "Vehicle details for couriers" },
+        "balance": { "type": "number", "description": "Current balance for couriers" }
+      },
+      "required": ["uid", "name", "email", "role"]
+    },
+    "Delivery": {
+      "title": "Delivery Order",
+      "description": "A delivery request created by a merchant.",
+      "type": "object",
+      "properties": {
+        "merchantId": { "type": "string", "description": "UID of the merchant" },
+        "courierId": { "type": "string", "description": "UID of the courier assigned" },
+        "origin": { "type": "string", "description": "Pickup address" },
+        "destination": { "type": "string", "description": "Delivery address" },
+        "customerName": { "type": "string", "description": "Customer name" },
+        "customerPhone": { "type": "string", "description": "Customer phone" },
+        "notes": { "type": "string", "description": "Delivery notes" },
+        "status": { "type": "string", "enum": ["searching", "collecting", "in-route", "delivered", "cancelled"], "description": "Current status" },
+        "price": { "type": "number", "description": "Delivery fee" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "deliveredAt": { "type": "string", "format": "date-time", "description": "Completion timestamp" }
+      },
+      "required": ["merchantId", "origin", "destination", "status", "price", "createdAt"]
+    },
+    "Earning": {
+      "title": "Courier Earning",
+      "description": "Financial record of a completed delivery for a courier.",
+      "type": "object",
+      "properties": {
+        "courierId": { "type": "string", "description": "UID of the courier" },
+        "deliveryId": { "type": "string", "description": "ID of the delivery" },
+        "amount": { "type": "number", "description": "Earned amount" },
+        "status": { "type": "string", "enum": ["pending", "completed", "cancelled"], "description": "Payment status" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp" }
+      },
+      "required": ["courierId", "deliveryId", "amount", "status", "createdAt"]
+    },
+    "PricingSettings": {
+      "title": "Pricing Settings",
+      "description": "Global pricing configuration for deliveries.",
+      "type": "object",
+      "properties": {
+        "platformFee": { "type": "number", "description": "Fixed platform fee" },
+        "baseDistance": { "type": "number", "description": "Distance threshold for base price" },
+        "basePrice": { "type": "number", "description": "Base price for deliveries up to baseDistance" },
+        "pricePerKm": { "type": "number", "description": "Price per km for distance above baseDistance" }
+      },
+      "required": ["platformFee", "baseDistance", "basePrice", "pricePerKm"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Payment record for a delivery.",
+      "type": "object",
+      "properties": {
+        "deliveryId": { "type": "string", "description": "ID of the delivery" },
+        "merchantId": { "type": "string", "description": "UID of the merchant" },
+        "amount": { "type": "number", "description": "Amount paid" },
+        "status": { "type": "string", "enum": ["pending", "paid", "failed"], "description": "Payment status" },
+        "pagBankReference": { "type": "string", "description": "PagBank transaction reference" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["deliveryId", "merchantId", "amount", "status", "createdAt"]
+    },
+    "Withdrawal": {
+      "title": "Withdrawal",
+      "description": "Withdrawal request for a courier.",
+      "type": "object",
+      "properties": {
+        "courierId": { "type": "string", "description": "UID of the courier" },
+        "amount": { "type": "number", "description": "Amount withdrawn" },
+        "status": { "type": "string", "enum": ["pending", "completed", "failed"], "description": "Withdrawal status" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["courierId", "amount", "status", "createdAt"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "A notification for a user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the recipient" },
+        "title": { "type": "string", "description": "Notification title" },
+        "message": { "type": "string", "description": "Notification message" },
+        "type": { "type": "string", "enum": ["info", "success", "warning", "error"], "description": "Notification type" },
+        "isRead": { "type": "boolean", "description": "Whether the notification has been read" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["userId", "title", "message", "type", "isRead", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/deliveries/{deliveryId}": {
+      "schema": "Delivery",
+      "description": "Delivery orders"
+    },
+    "/earnings/{earningId}": {
+      "schema": "Earning",
+      "description": "Courier earnings history"
+    },
+    "/payments/{paymentId}": {
+      "schema": "Payment",
+      "description": "Delivery payments"
+    },
+    "/withdrawals/{withdrawalId}": {
+      "schema": "Withdrawal",
+      "description": "Courier withdrawals"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "User notifications"
+    },
+    "/settings/pricing": {
+      "schema": "PricingSettings",
+      "description": "Global pricing configuration"
+    }
+  }
+}

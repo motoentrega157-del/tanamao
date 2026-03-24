@@ -1,0 +1,5 @@
+{
+  "name": "TaNaMao",
+  "description": "Plataforma de entregas rápidas para comerciantes e motoboys com foco em eficiência e rastreamento em tempo real.",
+  "requestFramePermissions": ["geolocation"]
+}
